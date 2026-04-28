@@ -1,0 +1,13 @@
+# Environment files
+.env
+
+# Image files 
+.png
+.jpg
+.jpeg
+.gif
+
+# Document files
+.pdf
+.doc
+.docx
