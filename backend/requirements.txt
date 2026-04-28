@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+neo4j
+python-dotenv
+langchain
+langchain-google-genai
+passlib[bcrypt]
+pyjwt
+pandas
+numpy

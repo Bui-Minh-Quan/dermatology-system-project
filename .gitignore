@@ -11,3 +11,6 @@
 .pdf
 .doc
 .docx
+
+# vevn folder
+backend/venv/
