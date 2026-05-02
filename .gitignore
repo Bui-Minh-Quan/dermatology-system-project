@@ -12,5 +12,13 @@
 .doc
 .docx
 
-# vevn folder
-backend/venv/
+# .env files
+.env
+.env.docker
+
+# venv folder
+backend/venv
+
+# Ignore pycache and __pycache__ folders
+__pycache__/
+*.pyc
