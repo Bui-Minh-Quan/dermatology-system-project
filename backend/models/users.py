@@ -89,6 +89,7 @@ class AIDiagnosis(Base):
     input_body_vector = Column(ARRAY(SmallInteger), nullable=True) # 8-dimensions
 
     predicted_disease = Column(String, nullable=True)
+    icd10_code = Column(String, nullable=True)
     confidence_score = Column(Float, nullable=True)
     heatmap_url = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)

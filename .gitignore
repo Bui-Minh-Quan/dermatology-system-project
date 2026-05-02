@@ -22,3 +22,6 @@ backend/venv
 # Ignore pycache and __pycache__ folders
 __pycache__/
 *.pyc
+
+# images in backend/static/
+backend/static/

@@ -10,7 +10,7 @@ import dotenv
 import os
 
 dotenv.load_dotenv()
-SECRET_KEY = os.getenv("SECRET_KEY") or "your_secret_key"
+SECRET_KEY = os.getenv("SECRET_KEY") or "yours_generated_long_random_string_here"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 
