@@ -25,5 +25,5 @@ services:
       - neo4j_data:/data   
 
 volumes:
-  postgres_data:
-  neo4j_data:
+postgres_data:
+neo4j_data:
