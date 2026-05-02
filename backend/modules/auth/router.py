@@ -127,6 +127,16 @@ def register_doctor(user_in: schemas.DoctorRegister, db: Session = Depends(get_d
         User.email_phone == user_in.email_phone
     ).first()
 
+    # 3. Check if License Number is already registered
+    existing_license = db.query(DoctorProfile).filter(
+        DoctorProfile.license_number == user_in.license_number
+    ).first()
+    if existing_license:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="License number already registered"
+        )
+
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from config.database import postgres_engine, Base 
 from models import users 
 from modules.auth import router as auth_router 
+from modules.auth import admin_router
+from modules.profiles import router as profiles_router
 
 # Create tables
 Base.metadata.create_all(bind=postgres_engine)
@@ -10,6 +12,8 @@ app = FastAPI(title="Dermatology AI System")
 
 # Plug in the Auth endpoints
 app.include_router(auth_router.router)
+app.include_router(admin_router.router)
+app.include_router(profiles_router.router)
 
 @app.get("/")
 def read_root():
