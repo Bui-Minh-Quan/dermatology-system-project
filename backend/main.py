@@ -6,6 +6,7 @@ from modules.auth import router as auth_router
 from modules.auth import admin_router
 from modules.profiles import router as profiles_router
 from modules.ai_diagnosis import router as diagnosis_router
+from modules.tracking import router as tracking_router
 
 # Create tables
 Base.metadata.create_all(bind=postgres_engine)
@@ -19,6 +20,8 @@ app.include_router(auth_router.router)
 app.include_router(admin_router.router)
 app.include_router(profiles_router.router)
 app.include_router(diagnosis_router.router)
+app.include_router(tracking_router.router)
+
 
 @app.get("/")
 def read_root():
