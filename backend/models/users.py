@@ -60,6 +60,7 @@ class PatientProfile(Base):
     diagnoses = relationship("AIDiagnosis", back_populates="patient")
     appointments = relationship("Appointment", back_populates="patient")
     tracking_sessions = relationship("TrackingSession", back_populates="patient")
+    medical_info = relationship("PatientMedicalInfo", back_populates="patient")
 
 
 class DoctorProfile(Base):
@@ -77,6 +78,23 @@ class DoctorProfile(Base):
 
     user = relationship("User", back_populates="doctor_profile")
     appointments = relationship("Appointment", back_populates="doctor")
+
+class PatientMedicalInfo(Base):
+    __tablename__ = "patient_medical_info"
+    patient_id = Column(UUID(as_uuid=True), ForeignKey("patient_profiles.patient_id"), primary_key=True)
+    blood_type = Column(String, nullable=True)
+    allergies = Column(Text, nullable=True)
+    chronic_conditions = Column(Text, nullable=True)
+    medications = Column(Text, nullable=True)
+    family_history = Column(Text, nullable=True)
+    medical_notes = Column(Text, nullable=True)
+    is_smoker = Column(String, nullable=True)
+    is_alcoholic = Column(String, nullable=True)
+    height_cm = Column(Float, nullable=True)
+    weight_kg = Column(Float, nullable=True)
+    is_pregnant = Column(String, nullable=True)
+
+    patient = relationship("PatientProfile", back_populates="medical_info")
 
 # 2. AI DIAGNOSIS
 class AIDiagnosis(Base):
@@ -150,3 +168,4 @@ class MedicalRecordSharing(Base):
 
     access_granted_at = Column(DateTime, default=datetime.utcnow)
     access_expired_at = Column(DateTime, nullable=True)
+

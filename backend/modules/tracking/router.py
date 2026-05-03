@@ -11,11 +11,13 @@ from . import schemas
 from uuid import UUID
 import uuid
 from typing import List
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Directory to store tracking session images
-TRACKING_IMAGE_DIR = "static/tracking_images"
+TRACKING_IMAGE_DIR = os.getenv("TRACKING_IMAGE_DIR", "static/tracking_images")
 os.makedirs(TRACKING_IMAGE_DIR, exist_ok=True)
-
 
 router = APIRouter(prefix="/tracking/sessions", tags=["Tracking Sessions"])
 
