@@ -33,6 +33,7 @@ API hỗ trợ tiếp nhận dữ liệu phức hợp bao gồm:
 * Hình ảnh tổn thương da.
 * Mô tả triệu chứng bằng văn bản.
 * Vector vị trí cơ thể (Body Vector) để xác định ngữ cảnh lâm sàng.
+
 Kết quả đầu ra:
 * Chẩn đoán sơ bộ với độ tin cậy.
 * Khoanh vùng tổn thương trên ảnh.
