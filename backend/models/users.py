@@ -42,6 +42,11 @@ class User(Base):
     status = Column(SQLEnum(UserStatusEnum), default=UserStatusEnum.PENDING)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+    full_name = Column(String, nullable=False)
+    date_of_birth = Column(DateTime, nullable=False)
+    gender = Column(String, nullable=False)
+    avatar_url = Column(String, nullable=True)
+
     patient_profile = relationship("PatientProfile", back_populates="user", uselist=False)
     doctor_profile = relationship("DoctorProfile", back_populates="user", uselist=False)
 
@@ -49,9 +54,7 @@ class User(Base):
 class PatientProfile(Base):
     __tablename__ = "patient_profiles"
     patient_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), primary_key=True)
-    full_name = Column(String, nullable=False)
-    date_of_birth = Column(DateTime, nullable=False)
-    gender = Column(String, nullable=False)
+    address = Column(String, nullable=True) 
     
     address = Column(String, nullable=True)
     avatar_url = Column(String, nullable=True)
@@ -69,16 +72,15 @@ class DoctorProfile(Base):
     license_number = Column(String, unique=True, nullable=False)
     specialty = Column(String, nullable=False)
     workplace = Column(String, nullable=False)
-
     experience_years = Column(Integer, nullable=True)
     bio = Column(Text, nullable=True)
-    avatar_url = Column(String, nullable=True)
     degree_image_url = Column(String, nullable=False)
     rating_average = Column(Float, default=0.0)
 
     user = relationship("User", back_populates="doctor_profile")
     appointments = relationship("Appointment", back_populates="doctor")
 
+    
 class PatientMedicalInfo(Base):
     __tablename__ = "patient_medical_info"
     patient_id = Column(UUID(as_uuid=True), ForeignKey("patient_profiles.patient_id"), primary_key=True)

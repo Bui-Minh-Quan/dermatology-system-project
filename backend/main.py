@@ -8,6 +8,7 @@ from modules.profiles import router as profiles_router
 from modules.ai_diagnosis import router as diagnosis_router
 from modules.tracking import router as tracking_router
 from modules.chatbot_rag import router as chatbot_router
+from modules.recommendation import router as recommendation_router
 
 # Create tables
 Base.metadata.create_all(bind=postgres_engine)
@@ -23,6 +24,8 @@ app.include_router(profiles_router.router)
 app.include_router(diagnosis_router.router)
 app.include_router(tracking_router.router)
 app.include_router(chatbot_router.router)
+app.include_router(recommendation_router.router)
+
 
 @app.get("/")
 def read_root():

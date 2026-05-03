@@ -41,9 +41,16 @@ class PatientRegister(BaseRegister):
     address: Optional[str] = None 
     # Role is automatically assumed to be PATIENT in the router
 
-class DoctorRegister(BaseRegister):
-    license_number: str 
-    specialty: str 
-    workplace: str 
-    avatar_url: Optional[str] = None 
+class DoctorRegister(BaseModel):
+    email_phone: str
+    password: str
+    full_name: str
+    date_of_birth: datetime 
+    gender: str
+    license_number: str
+    specialty: str
+    workplace: str
+    # Optional fields
+    experience_years: Optional[int] = None
+    bio: Optional[str] = None
     degree_image_url: str 

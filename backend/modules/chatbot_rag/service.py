@@ -10,7 +10,6 @@ load_dotenv()
 # Step 1: Initialize the New Client
 api_key = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key)
-# In 2026, we'll use the latest stable flash model
 MODEL_ID = "gemini-2.5-flash" 
 
 class GraphRAGService:
@@ -18,7 +17,6 @@ class GraphRAGService:
     def extract_entities(query: str):
         prompt = f"Extract skin-related medical entities from this text as a JSON list of strings: {query}"
         try:
-            # ✅ FIX: Pass the string MODEL_ID directly
             response = client.models.generate_content(
                 model=MODEL_ID, 
                 contents=prompt
@@ -79,7 +77,6 @@ class GraphRAGService:
         """
 
         try:
-            # ✅ FIX: Pass the string MODEL_ID directly
             response = client.models.generate_content(
                 model=MODEL_ID, 
                 contents=full_prompt

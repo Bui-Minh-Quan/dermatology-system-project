@@ -48,61 +48,42 @@ def request_otp(otp_request: schemas.OTPRequest, db: Session = Depends(get_db)):
 # =========================================================
 @router.post("/register/patient", status_code=status.HTTP_201_CREATED)
 def register_patient(user_in: schemas.PatientRegister, db: Session = Depends(get_db)):
-    """
-    Register a new patient account + profile.
-    """
-
-    # 1. Validate OTP (mock)
+    # 1. Validate OTP
     if user_in.otp_code != "123456":
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid OTP"
-        )
+        raise HTTPException(status_code=400, detail="Mã OTP không hợp lệ")
 
-    # 2. Check for duplicate account
-    existing_user = db.query(User).filter(
-        User.email_phone == user_in.email_phone
-    ).first()
-
+    # 2. Check for duplicate
+    existing_user = db.query(User).filter(User.email_phone == user_in.email_phone).first()
     if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User already exists"
-        )
+        raise HTTPException(status_code=400, detail="Người dùng đã tồn tại")
 
     try:
-        # 3. Create User (authentication layer)
-        hashed_pw = security.get_password_hash(user_in.password)
-
+        # 3. Create User (Now containing Identity data)
         new_user = User(
             email_phone=user_in.email_phone,
-            password_hash=hashed_pw,
+            password_hash=security.get_password_hash(user_in.password),
             role=RoleEnum.PATIENT,
-            status=UserStatusEnum.ACTIVE
-        )
-
-        db.add(new_user)
-        db.flush()  # Get user_id without committing
-
-        # 4. Create Patient Profile
-        new_profile = PatientProfile(
-            patient_id=new_user.user_id,
+            status=UserStatusEnum.ACTIVE,
             full_name=user_in.full_name,
             date_of_birth=user_in.date_of_birth,
-            gender=user_in.gender,
+            gender=user_in.gender
+        )
+        db.add(new_user)
+        db.flush()
+
+        # 4. Create Patient Profile (Now only containing Patient-specific data)
+        new_profile = PatientProfile(
+            patient_id=new_user.user_id,
             address=user_in.address
         )
-
         db.add(new_profile)
-
-        # 5. Commit transaction
         db.commit()
 
-    except Exception:
+    except Exception as e:
         db.rollback()
-        raise
+        raise HTTPException(status_code=500, detail=str(e))
 
-    return {"message": "Patient registration completed successfully"}
+    return {"message": "Đăng ký bệnh nhân thành công"}
 
 
 # =========================================================
@@ -110,72 +91,51 @@ def register_patient(user_in: schemas.PatientRegister, db: Session = Depends(get
 # =========================================================
 @router.post("/register/doctor", status_code=status.HTTP_201_CREATED)
 def register_doctor(user_in: schemas.DoctorRegister, db: Session = Depends(get_db)):
-    """
-    Register a doctor account.
-    Doctors require admin approval before becoming ACTIVE.
-    """
-
-    # 1. Validate OTP (mock)
+    # 1. Validate OTP
     if user_in.otp_code != "123456":
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid OTP"
-        )
+        raise HTTPException(status_code=400, detail="Mã OTP không hợp lệ")
 
-    # 2. Check for duplicate account
-    existing_user = db.query(User).filter(
-        User.email_phone == user_in.email_phone
-    ).first()
-
-    # 3. Check if License Number is already registered
-    existing_license = db.query(DoctorProfile).filter(
-        DoctorProfile.license_number == user_in.license_number
-    ).first()
-    if existing_license:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="License number already registered"
-        )
-
+    # 2. Check for duplicate account/license
+    existing_user = db.query(User).filter(User.email_phone == user_in.email_phone).first()
     if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User already exists"
-        )
+        raise HTTPException(status_code=400, detail="Người dùng đã tồn tại")
+
+    existing_license = db.query(DoctorProfile).filter(DoctorProfile.license_number == user_in.license_number).first()
+    if existing_license:
+        raise HTTPException(status_code=400, detail="Số giấy phép đã được đăng ký")
 
     try:
-        # 3. Create User (pending status)
-        hashed_pw = security.get_password_hash(user_in.password)
-
+        # 3. Create User (Identity data)
         new_user = User(
             email_phone=user_in.email_phone,
-            password_hash=hashed_pw,
+            password_hash=security.get_password_hash(user_in.password),
             role=RoleEnum.DOCTOR,
-            status=UserStatusEnum.PENDING
+            status=UserStatusEnum.PENDING,
+            full_name=user_in.full_name,
+            date_of_birth=user_in.date_of_birth,
+            gender=user_in.gender
         )
-
         db.add(new_user)
         db.flush()
 
-        # 4. Create Doctor Profile
+        # 4. Create Doctor Profile (Professional data only)
         new_profile = DoctorProfile(
             doctor_id=new_user.user_id,
             license_number=user_in.license_number,
             specialty=user_in.specialty,
             workplace=user_in.workplace,
-            degree_image_url=user_in.degree_image_url,
+            experience_years=user_in.experience_years,
+            bio=user_in.bio,
+            degree_image_url=user_in.degree_image_url
         )
-
         db.add(new_profile)
-
-        # 5. Commit transaction
         db.commit()
 
-    except Exception:
+    except Exception as e:
         db.rollback()
-        raise
+        raise HTTPException(status_code=500, detail=str(e))
 
-    return {"message": "Registration completed. Waiting for admin approval."}
+    return {"message": "Đăng ký thành công. Đang chờ Admin duyệt."}
 
 
 # =========================================================
