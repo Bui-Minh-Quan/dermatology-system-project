@@ -4,7 +4,9 @@ import torch.nn as nn
 from torchvision import transforms
 from torchvision.models import mobilenet_v3_small, MobileNet_V3_Small_Weights
 from torchvision.models import efficientnet_v2_s, EfficientNet_V2_S_Weights
+from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 from transformers import AutoModel, AutoTokenizer
+
 from PIL import Image
 
 import cv2
@@ -382,18 +384,20 @@ class TrimodalGradCamWrapper(nn.Module):
         return logits
 
 
-def generate_gradcam_and_predict(model_wrapper, image_tensor, original_rgb_image, target_layer, threshold=0.4):
+def generate_gradcam_and_predict(model_wrapper, image_tensor, original_rgb_image, target_layer, threshold=0.4, target_category=None):
     """
-    Generates the Grad-CAM overlay AND extracts the logits from the wrapper's cache.
+    Generates the Grad-CAM overlay. Accepts a target_category to force Grad-CAM 
+    to explain a specific disease prediction.
     """
     model_wrapper.eval()
     image_tensor.requires_grad_(True)
 
-    with GradCAMPlusPlus(model=model_wrapper, target_layers=[target_layer]) as cam:
-        # This inherently triggers model_wrapper.forward()
-        grayscale_cam = cam(input_tensor=image_tensor)[0]
+    # Force Grad-CAM to look at a specific class index if provided
+    targets = [ClassifierOutputTarget(target_category)] if target_category is not None else None
 
-    # Retrieve the cached logits
+    with GradCAMPlusPlus(model=model_wrapper, target_layers=[target_layer]) as cam:
+        grayscale_cam = cam(input_tensor=image_tensor, targets=targets)[0]
+
     logits = model_wrapper.last_logits
 
     # Resize, Threshold, and Blend
@@ -411,6 +415,7 @@ def generate_gradcam_and_predict(model_wrapper, image_tensor, original_rgb_image
     visualization = np.clip(visualization, 0, 1)
 
     return visualization, logits
+
 
 
 

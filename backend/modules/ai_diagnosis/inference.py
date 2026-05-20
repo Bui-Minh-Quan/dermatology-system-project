@@ -74,31 +74,46 @@ def process_diagnosis_internal(diagnosis_id: str, image_path: str, symptoms: str
         has_text_mask = torch.tensor([[1.0 if symptoms else 0.0]], dtype=torch.float32).to(ml_state.device)
 
         # ==========================================
-        # STAGE 3: WRAPPER & GRAD-CAM INFERENCE
+        # STAGE 3A: PASS 1 - FULL TRIMODAL PREDICTION
         # ==========================================
+        with torch.inference_mode():
+            logits = ml_state.trimodal_classifier(
+                image=trimodal_tensor,
+                location_vector=meta_tensor,
+                input_ids=encoded_text['input_ids'],
+                attention_mask=encoded_text['attention_mask'],
+                has_text_mask=has_text_mask
+            )
+            
+            confidence = torch.softmax(logits, dim=1).max().item()
+            predicted_idx = torch.argmax(logits, dim=1).item()
+            predicted_disease = DISEASE_CLASSES_9[predicted_idx]
+
+        # ==========================================
+        # STAGE 3B: PASS 2 - UNIMODAL GRAD-CAM 
+        # ==========================================
+        # We drop the text and metadata so gradients flow 100% to the image
+        empty_text_mask = torch.tensor([[0.0]], dtype=torch.float32).to(ml_state.device)
+        
         wrapper_model = TrimodalGradCamWrapper(
-            model=ml_state.trimodal_classifier, # Grab classifier from global state!
-            location_vector=meta_tensor,
-            input_ids=encoded_text['input_ids'],
+            model=ml_state.trimodal_classifier,
+            location_vector=None,             # Drops the metadata branch
+            input_ids=encoded_text['input_ids'], 
             attention_mask=encoded_text['attention_mask'],
-            has_text_mask=has_text_mask
+            has_text_mask=empty_text_mask     # Drops the text branch
         )
         
         target_layer = wrapper_model.model.image_encoder.features[-1]
         
-        heatmap_overlay, logits = generate_gradcam_and_predict(
+        # We pass the predicted_idx from Pass 1 so Grad-CAM explains the exact disease
+        heatmap_overlay, _ = generate_gradcam_and_predict(
             model_wrapper=wrapper_model, 
             image_tensor=trimodal_tensor, 
             original_rgb_image=np.array(raw_image.resize((384, 384))) / 255.0, 
             target_layer=target_layer,
-            threshold=0.4
+            threshold=0.2,
+            target_category=predicted_idx  
         )
-        
-        with torch.no_grad():
-            confidence = torch.softmax(logits, dim=1).max().item()
-            predicted_idx = torch.argmax(logits, dim=1).item()
-            
-        predicted_disease = DISEASE_CLASSES_9[predicted_idx]
         
         # ==========================================
         # STAGE 4: SAVE OUTPUTS & FINALIZE
