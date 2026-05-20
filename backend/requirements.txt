@@ -1,12 +1,34 @@
+# Web Framework & Database
 fastapi
 uvicorn
 sqlalchemy
 psycopg2-binary
 neo4j
 python-dotenv
-langchain
-langchain-google-genai
+aiofiles
+
+# Security
 passlib[bcrypt]
 pyjwt
+
+# Data Processing
 pandas
 numpy
+
+# AI & Machine Learning
+torch
+torchvision
+transformers
+
+# Background Task Processing
+redis
+rq
+
+# Computer Vision & Explainability
+opencv-python-headless
+grad-cam
+Pillow
+
+# LangChain and GenAI
+langchain
+langchain-google-genai

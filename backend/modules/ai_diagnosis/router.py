@@ -1,141 +1,170 @@
 import os
 import uuid
 import shutil
-import random
+from pathlib import Path
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
-from sqlalchemy.orm import Session
 from dotenv import load_dotenv
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    UploadFile,
+    status,
+    BackgroundTasks  # Added for native background processing
+)
+from sqlalchemy.orm import Session
 
-from config.database import get_db
-from models.users import User, AIDiagnosis
+# Import database and models
+from config.database import get_db 
+from models.users import User, AIDiagnosis, DiagnosisStatusEnum
 from modules.auth.security import get_current_user
 from . import schemas
 
+# Import the inference function
+from .inference import process_diagnosis_internal
+
 load_dotenv()
 
-router = APIRouter(prefix="/diagnosis", tags=["AI Diagnosis"])
+router = APIRouter(
+    prefix="/diagnosis",
+    tags=["AI Diagnosis"]
+)
 
-# Load config from .env
-UPLOAD_DIR = os.getenv("UPLOAD_DIR", "static/uploads")
-HEATMAP_DIR = os.getenv("HEATMAP_DIR", "static/heatmaps")
-MAX_FILE_SIZE = int(os.getenv("MAX_FILE_SIZE", 5 * 1024 * 1024))  # default 5MB
+# =========================================================
+# CONFIG SETUP (Redis removed)
+# =========================================================
+UPLOAD_DIR = Path(os.getenv("UPLOAD_DIR", "static/uploads"))
+HEATMAP_DIR = Path(os.getenv("HEATMAP_DIR", "static/heatmaps"))
 
-# Ensure upload directory exists
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-os.makedirs(HEATMAP_DIR, exist_ok=True)
+MAX_FILE_SIZE = int(os.getenv("MAX_FILE_SIZE", 5 * 1024 * 1024))  # 5MB default
 
-# Allowed image types
 ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
+# Ensure directories exist
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+HEATMAP_DIR.mkdir(parents=True, exist_ok=True)
 
+# =========================================================
+# HELPERS
+# =========================================================
+def validate_image(image: UploadFile):
+    """Validates the uploaded file's type and extension."""
+    if image.content_type not in ALLOWED_MIME_TYPES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid file type. Allowed types: {', '.join(ALLOWED_MIME_TYPES)}"
+        )
+    
+    file_extension = image.filename.split(".")[-1].lower()
+    if file_extension not in ALLOWED_EXTENSIONS:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid file extension. Allowed extensions: {', '.join(ALLOWED_EXTENSIONS)}"
+        )
+    return file_extension
+
+
+# =========================================================
+# ENDPOINTS
+# =========================================================
 @router.post("/", response_model=schemas.DiagnosisResponse)
 async def create_diagnosis(
+    background_tasks: BackgroundTasks,  # Inject FastAPI's BackgroundTasks
     image: UploadFile = File(...),
     symptoms: Optional[str] = Form(None),
-    body_vector: str = Form("0,0,0,0,0,0,0,1"),
+    body_vector: Optional[str] = Form(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    # -------------------------------
-    # 1. Validate file type
-    # -------------------------------
-    if image.content_type not in ALLOWED_MIME_TYPES:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid file type. Only JPG, PNG, WEBP allowed."
-        )
+    """
+    Uploads an image, creates a PENDING database record, 
+    and triggers the AI Inference natively in the background.
+    """
+    # 1. Validate Image
+    file_extension = validate_image(image)
 
-    file_extension = image.filename.split(".")[-1].lower()
-
-    if file_extension not in ALLOWED_EXTENSIONS:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid file extension."
-        )
-
-    # -------------------------------
-    # 2. Validate file size
-    # -------------------------------
-    contents = await image.read()
-
-    if len(contents) > MAX_FILE_SIZE:
-        raise HTTPException(
-            status_code=400,
-            detail="File too large. Max size is 5MB."
-        )
-
-    # Reset file pointer after reading
-    image.file.seek(0)
-
-    # -------------------------------
-    # 3. Save file
-    # -------------------------------
-    file_name = f"{uuid.uuid4()}.{file_extension}"
-    file_path = os.path.join(UPLOAD_DIR, file_name)
-
-    web_url = f"/static/uploads/{file_name}"
+    # 2. Save Image Locally
+    unique_filename = f"{uuid.uuid4()}.{file_extension}"
+    file_path = UPLOAD_DIR / unique_filename
 
     try:
         with open(file_path, "wb") as buffer:
-            buffer.write(contents)
+            shutil.copyfileobj(image.file, buffer)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to save image to disk: {str(e)}"
+        )
+    
+    image_url = f"/static/uploads/{unique_filename}"
 
-        # -------------------------------
-        # 4. Mock AI processing
-        # -------------------------------
-        mock_results = [
-            {"name": "Acne Vulgaris", "confidence": 0.95, "icd": "L70.0"},
-            {"name": "Eczema", "confidence": 0.75, "icd": "L20.9"},
-        ]
-        result = random.choice(mock_results)
+    # 3. Parse metadata vector 
+    try:
+        vector_list = [int(x.strip()) for x in body_vector.split(",")] if body_vector else [0]*8
+        if len(vector_list) != 8:
+            vector_list = [0]*8  # Fallback if malformed
+    except ValueError:
+        vector_list = [0]*8
 
-        # Fake heatmap
-        heatmap_filename = f"heatmap_{file_name}"
-        heatmap_path = os.path.join(HEATMAP_DIR, heatmap_filename)
-        shutil.copy(file_path, heatmap_path)
-
-        heatmap_url = f"/static/heatmaps/{heatmap_filename}"
-
-        # -------------------------------
-        # 5. Process body vector
-        # -------------------------------
-        try:
-            vector_list = [int(x) for x in body_vector.split(",")]
-        except ValueError:
-            raise HTTPException(status_code=400, detail="Invalid body_vector format")
-
-        # -------------------------------
-        # 6. Save to database
-        # -------------------------------
-        new_diagnosis = AIDiagnosis(
+    # 4. Database Transaction & Queueing
+    try:
+        # Create PENDING record
+        diagnosis = AIDiagnosis(
             patient_id=current_user.user_id,
-            input_image_url=web_url,
+            input_image_url=image_url,
             input_symptoms=symptoms,
             input_body_vector=vector_list,
-            predicted_disease=result["name"],
-            icd10_code=result["icd"],
-            confidence_score=result["confidence"],
-            heatmap_url=heatmap_url
+            status=DiagnosisStatusEnum.PENDING
         )
 
-        db.add(new_diagnosis)
+        db.add(diagnosis)
         db.commit()
-        db.refresh(new_diagnosis)
+        db.refresh(diagnosis)
 
-        return new_diagnosis
+        # FIRE THE BACKGROUND TASK NATIVELY
+        background_tasks.add_task(
+            process_diagnosis_internal, 
+            str(diagnosis.diagnosis_id), 
+            str(file_path), 
+            symptoms, 
+            vector_list
+        )
 
+        return diagnosis
+    
     except Exception as e:
-        # -------------------------------
-        # 7. Cleanup on failure
-        # -------------------------------
         db.rollback()
+        if file_path.exists():
+            file_path.unlink()  # Clean up orphaned image
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to queue AI Diagnosis: {str(e)}"
+        )
+    
 
-        if os.path.exists(file_path):
-            os.remove(file_path)
+@router.get("/{diagnosis_id}", response_model=schemas.DiagnosisResponse)
+def get_diagnosis_status(
+    diagnosis_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Retrieves the current status of a diagnosis. 
+    The frontend should poll this endpoint until status is COMPLETED or FAILED.
+    """
+    diagnosis = db.query(AIDiagnosis).filter(
+        AIDiagnosis.diagnosis_id == diagnosis_id,
+        AIDiagnosis.patient_id == current_user.user_id
+    ).first()
 
-        if 'heatmap_path' in locals() and os.path.exists(heatmap_path):
-            os.remove(heatmap_path)
-
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+    if not diagnosis:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Diagnosis record not found or access denied."
+        )
+    
+    return diagnosis

@@ -25,3 +25,11 @@ __pycache__/
 
 # images in backend/static/
 backend/static/
+
+# Deep learning model files
+*.h5
+*.pt
+*.pth
+
+# Ignore vscode settings
+.vscode/

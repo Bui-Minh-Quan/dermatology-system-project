@@ -19,6 +19,15 @@ class UserStatusEnum(str, enum.Enum):
     PENDING = "pending"
     LOCKED = "locked"
 
+
+class DiagnosisStatusEnum(str, enum.Enum):
+    PENDING = "pending"           # Uploaded, waiting in Redis queue
+    PROCESSING = "processing"     # Worker picked it up
+    COMPLETED = "completed"       # Trimodal model finished, heatmap generated
+    REJECTED = "rejected"         # MobileNet gatekeeper said "Not Skin"
+    FAILED = "failed"             # System error
+
+
 class AppointmentStatusEnum(str, enum.Enum):
     PENDING = "pending"
     CONFIRMED = "confirmed"
@@ -55,16 +64,12 @@ class PatientProfile(Base):
     __tablename__ = "patient_profiles"
     patient_id = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), primary_key=True)
     address = Column(String, nullable=True) 
-    
-    address = Column(String, nullable=True)
-    avatar_url = Column(String, nullable=True)
 
     user = relationship("User", back_populates="patient_profile")
     diagnoses = relationship("AIDiagnosis", back_populates="patient")
     appointments = relationship("Appointment", back_populates="patient")
     tracking_sessions = relationship("TrackingSession", back_populates="patient")
     medical_info = relationship("PatientMedicalInfo", back_populates="patient")
-
 
 class DoctorProfile(Base):
     __tablename__ = "doctor_profiles"
@@ -103,6 +108,10 @@ class AIDiagnosis(Base):
     __tablename__ = "ai_diagnosis"
     diagnosis_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     patient_id = Column(UUID(as_uuid=True), ForeignKey("patient_profiles.patient_id"), nullable=False)
+
+    # Status Tracking for Background Worker
+    status = Column(SQLEnum(DiagnosisStatusEnum, values_callable=lambda obj: [e.value for e in obj]), default=DiagnosisStatusEnum.PENDING)
+    error_message = Column(Text, nullable=True) # E.g., "Image rejected by gatekeeper"
 
     input_image_url = Column(String, nullable=False)
     input_symptoms = Column(Text, nullable=True)
