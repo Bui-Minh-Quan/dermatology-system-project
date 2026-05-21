@@ -103,7 +103,7 @@ def process_diagnosis_internal(diagnosis_id: str, image_path: str, symptoms: str
             has_text_mask=empty_text_mask     # Drops the text branch
         )
         
-        target_layer = wrapper_model.model.image_encoder.features[-1]
+        target_layer = wrapper_model.model.image_encoder.features[7]
         
         # We pass the predicted_idx from Pass 1 so Grad-CAM explains the exact disease
         heatmap_overlay, _ = generate_gradcam_and_predict(
