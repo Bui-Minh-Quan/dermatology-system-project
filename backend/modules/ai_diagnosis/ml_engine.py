@@ -419,4 +419,3 @@ def generate_gradcam_and_predict(model_wrapper, image_tensor, original_rgb_image
 
 
 
-print("✅ Baseline trimodal model defined successfully!")

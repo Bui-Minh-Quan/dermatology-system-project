@@ -70,5 +70,3 @@ class Neo4jHandler:
 
 # Global instance
 neo4j_connector = Neo4jHandler()
-
-print(f"✅ Database configurations loaded. Using: {NEO4J_URI}")

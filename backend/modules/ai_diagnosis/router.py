@@ -3,6 +3,7 @@ import uuid
 import shutil
 from pathlib import Path
 from typing import Optional
+from config.queue import diagnosis_queue  # Importing the RQ queue (though we will not use it in this version)
 
 from dotenv import load_dotenv
 from fastapi import (
@@ -12,8 +13,7 @@ from fastapi import (
     Form,
     HTTPException,
     UploadFile,
-    status,
-    BackgroundTasks  # Added for native background processing
+    status # Added for native background processing
 )
 from sqlalchemy.orm import Session
 
@@ -73,7 +73,6 @@ def validate_image(image: UploadFile):
 # =========================================================
 @router.post("/", response_model=schemas.DiagnosisResponse)
 async def create_diagnosis(
-    background_tasks: BackgroundTasks,  # Inject FastAPI's BackgroundTasks
     image: UploadFile = File(...),
     symptoms: Optional[str] = Form(None),
     body_vector: Optional[str] = Form(None),
@@ -126,11 +125,11 @@ async def create_diagnosis(
         db.refresh(diagnosis)
 
         # FIRE THE BACKGROUND TASK NATIVELY
-        background_tasks.add_task(
-            process_diagnosis_internal, 
-            str(diagnosis.diagnosis_id), 
-            str(file_path), 
-            symptoms, 
+        diagnosis_queue.enqueue(
+            process_diagnosis_internal,
+            str(diagnosis.diagnosis_id),
+            str(file_path),
+            symptoms,
             vector_list
         )
 
