@@ -11,7 +11,6 @@ from PIL import Image
 
 import cv2
 import numpy as np
-import torch
 from pytorch_grad_cam import GradCAMPlusPlus
 
 DISEASE_CLASSES_9 = sorted([

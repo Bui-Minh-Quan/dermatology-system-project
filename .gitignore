@@ -26,6 +26,12 @@ __pycache__/
 # images in backend/static/
 backend/static/
 
+# all images
+*.png
+*.jpg
+*.jpeg
+*.gif
+
 # Deep learning model files
 *.h5
 *.pt
