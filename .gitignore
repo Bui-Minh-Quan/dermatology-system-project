@@ -19,6 +19,9 @@
 # venv folder
 backend/venv
 
+# venv for ai-inference-service
+ai-inference-service/venv
+
 # Ignore pycache and __pycache__ folders
 __pycache__/
 *.pyc

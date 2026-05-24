@@ -1,7 +1,7 @@
-from pydantic import BaseModel 
+from pydantic import BaseModel, field_validator
 from uuid import UUID 
 from datetime import datetime 
-from typing import Optional
+from typing import Optional, List
 
 class DiagnosisResponse(BaseModel):
     diagnosis_id: UUID 
@@ -18,3 +18,5 @@ class DiagnosisResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+

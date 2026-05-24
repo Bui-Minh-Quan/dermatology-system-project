@@ -5,7 +5,6 @@ from fastapi.staticfiles import StaticFiles
 from transformers import AutoTokenizer
 
 from config.database import postgres_engine, Base 
-from config.ml_state import ml_state  # Import our new global container!
 
 from models import users 
 from modules.auth import router as auth_router 
