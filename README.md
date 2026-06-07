@@ -1,4 +1,4 @@
-# Hệ thống Đa phương thức Hỗ trợ Chẩn đoán và Quản lý Bệnh lý Da liễu dựa trên Đồ thị Tri thức và Học sâu
+# Hệ thống đa phương thức hỗ trợ chẩn đoán và quản lý bệnh lý da liễu dựa trên đồ thị tri thức và học sâu
 
 ## Thông tin Sinh viên thực hiện
 * **Họ và tên:** Bùi Minh Quân
