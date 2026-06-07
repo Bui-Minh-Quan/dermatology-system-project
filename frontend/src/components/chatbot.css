@@ -1,0 +1,150 @@
+.chatbot-container {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  width: 100%;
+  max-width: 600px;
+  height: 600px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+.chatbot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.chatbot-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #2c3e50;
+}
+
+.clear-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  transition: background 0.2s;
+}
+
+.clear-btn:hover {
+  background: #e9ecef;
+}
+
+/* Khu vực hiển thị tin nhắn */
+.chat-window {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: #ffffff;
+}
+
+.empty-state {
+  margin: auto;
+  color: #adb5bd;
+  text-align: center;
+  font-style: italic;
+}
+
+.message-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+.message-wrapper.user {
+  justify-content: flex-end;
+}
+
+.message-wrapper.ai {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  word-wrap: break-word;
+  white-space: pre-wrap; /* Giữ lại các dấu xuống dòng từ AI */
+}
+
+.user .message-bubble {
+  background-color: #007bff;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.ai .message-bubble {
+  background-color: #f1f3f5;
+  color: #212529;
+  border-bottom-left-radius: 4px;
+}
+
+/* Phần nhập liệu */
+.chat-input-form {
+  display: flex;
+  padding: 15px;
+  background-color: #fff;
+  border-top: 1px solid #e9ecef;
+  gap: 10px;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid #ced4da;
+  border-radius: 16px;
+  font-size: 1rem;
+  line-height: 1.4;
+  min-height: 48px;
+  max-height: 160px;
+  resize: none;
+  overflow-y: auto;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.chat-input:focus {
+  border-color: #4dabf7;
+}
+
+.chat-input:disabled {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+.send-btn {
+  padding: 0 20px;
+  align-self: flex-end;
+  height: 48px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.send-btn:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.send-btn:disabled {
+  background-color: #a5c8ff;
+  cursor: not-allowed;
+}

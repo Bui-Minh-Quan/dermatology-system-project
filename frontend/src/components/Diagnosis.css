@@ -1,0 +1,367 @@
+
+:root {
+  --bg-start: #f8f4ec;
+  --bg-end: #e7f1ec;
+  --card: #ffffff;
+  --ink: #1f2a35;
+  --muted: #5f6b76;
+  --border: #d7dee3;
+  --accent: #006d77;
+  --accent-soft: #d8f1ec;
+  --danger: #c44536;
+  --success: #228b5b;
+}
+
+.diagnosis-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+  overflow: hidden;
+}
+
+.diagnosis-page::before,
+.diagnosis-page::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+.diagnosis-page::before {
+  width: 260px;
+  height: 260px;
+  top: -90px;
+  right: -60px;
+  background: rgba(0, 109, 119, 0.2);
+}
+
+.diagnosis-page::after {
+  width: 220px;
+  height: 220px;
+  left: -80px;
+  bottom: -70px;
+  background: rgba(255, 188, 96, 0.24);
+}
+
+.diagnosis-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 920px;
+  border-radius: 24px;
+  padding: 28px;
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 20px 60px rgba(23, 37, 51, 0.14);
+}
+
+.card-header {
+  margin-bottom: 22px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  margin: 0 0 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.main-title {
+  margin: 0;
+  color: var(--ink);
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: clamp(1.4rem, 3vw, 2.05rem);
+  line-height: 1.2;
+}
+
+.subtitle {
+  margin: 10px 0 0;
+  color: var(--muted);
+  max-width: 64ch;
+  line-height: 1.6;
+}
+
+.diagnosis-form {
+  display: grid;
+  gap: 16px;
+}
+
+.form-section {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  background: #fbfdff;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 1rem;
+  color: #22313f;
+}
+
+.section-tip {
+  font-size: 0.85rem;
+  color: #6b7b88;
+}
+
+.upload-box {
+  background: linear-gradient(180deg, #f7fbfb, #fdfefe);
+}
+
+.file-picker {
+  display: block;
+  border: 1px dashed #9fb5bf;
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease;
+}
+
+.file-picker:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.picker-title {
+  display: block;
+  color: #1f2d39;
+  font-weight: 600;
+}
+
+.picker-subtitle {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.9rem;
+  color: #6f7d89;
+}
+
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.preview-image,
+.preview-placeholder {
+  margin-top: 14px;
+  width: 100%;
+  max-height: 320px;
+  min-height: 180px;
+  border-radius: 12px;
+  border: 1px solid #d4dde3;
+}
+
+.preview-image {
+  object-fit: cover;
+}
+
+.preview-placeholder {
+  display: grid;
+  place-items: center;
+  color: #7a8893;
+  background: #f4f8fa;
+}
+
+.symptoms-input {
+  width: 100%;
+  min-height: 108px;
+  border: 1px solid #ccdae1;
+  border-radius: 12px;
+  padding: 12px;
+  color: #1d2a34;
+  line-height: 1.5;
+  resize: vertical;
+  box-sizing: border-box;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+}
+
+.symptoms-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 109, 119, 0.18);
+}
+
+.body-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 10px;
+}
+
+.part-btn {
+  border: 1px solid #cad8e0;
+  border-radius: 10px;
+  padding: 10px 8px;
+  background: #ffffff;
+  color: #2b3a47;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+
+.part-btn:hover {
+  border-color: #94aeb9;
+  transform: translateY(-1px);
+}
+
+.part-btn.active {
+  border-color: #005962;
+  background: #0b7b86;
+  color: #ffffff;
+  box-shadow: 0 7px 18px rgba(11, 123, 134, 0.28);
+}
+
+.submit-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background: linear-gradient(120deg, #006d77, #008a66);
+  cursor: pointer;
+  transition: transform 150ms ease, filter 150ms ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+.submit-btn:disabled {
+  opacity: 0.62;
+  cursor: not-allowed;
+}
+
+.error-text {
+  margin: 0;
+  border-radius: 10px;
+  border: 1px solid rgba(196, 69, 54, 0.35);
+  background: #fff3f1;
+  color: var(--danger);
+  padding: 10px 12px;
+  font-weight: 600;
+}
+
+.result-card {
+  margin-top: 20px;
+  border-top: 1px solid #dce4ea;
+  padding-top: 20px;
+}
+
+.result-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.result-label {
+  margin: 0;
+  color: #60707f;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.78rem;
+}
+
+.disease-name {
+  margin: 0;
+  color: #15324a;
+  font-size: clamp(1.25rem, 2.5vw, 1.7rem);
+}
+
+.confidence-wrapper {
+  margin-top: 14px;
+  width: 100%;
+  height: 11px;
+  border-radius: 999px;
+  background: #d8e4e8;
+  overflow: hidden;
+}
+
+.confidence-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #1f8f64, var(--success));
+  transition: width 420ms ease;
+}
+
+.confidence-text {
+  margin: 10px 0 18px;
+  color: #344856;
+  font-size: 0.95rem;
+}
+
+.images-container {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.image-box {
+  border-radius: 14px;
+  border: 1px solid #d3dde4;
+  padding: 12px;
+  background: #fafdff;
+}
+
+.image-box h3 {
+  margin: 0 0 10px;
+  color: #2b3e4e;
+  font-size: 0.95rem;
+}
+
+.result-img,
+.image-fallback {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #d4dee5;
+}
+
+.result-img {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.image-fallback {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  color: #7b8892;
+  background: #f2f7fa;
+}
+
+@media (max-width: 768px) {
+  .diagnosis-page {
+    padding: 18px 12px;
+  }
+
+  .diagnosis-card {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .images-container {
+    grid-template-columns: 1fr;
+  }
+}
