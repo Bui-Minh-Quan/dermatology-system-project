@@ -1,69 +1,85 @@
-# Hệ thống hỗ trợ chẩn đoán và quản lý bệnh lý da liễu (Dermatology Support System)
+# Hệ thống Đa phương thức Hỗ trợ Chẩn đoán và Quản lý Bệnh lý Da liễu dựa trên Đồ thị Tri thức và Học sâu
 
-## Thông tin sinh viên
-* **Sinh viên thực hiện:** Bùi Minh Quân
+## Thông tin Sinh viên thực hiện
+* **Họ và tên:** Bùi Minh Quân
 * **Mã số sinh viên:** 23020415
 * **Lớp:** K68-AI1
-* **Đề tài:** Hệ thống đa phương thức hỗ trợ chẩn đoán và quản lý bệnh lý da liễu dựa trên Đồ thị tri thức (Knowledge Graph) và Học sâu (Deep Learning).
+* **Đề tài:** Hệ thống đa phương thức hỗ trợ chẩn đoán và quản lý bệnh lý da liễu dựa trên Đồ thị tri thức và Học sâu.
 
 ---
 
-## Giới thiệu
-Dự án tập trung vào việc cung cấp một công nghệ tiện lợi có thể sử dụng tại nhà để hỗ trợ chẩn đoán và quản lý bệnh lý da liễu. Hệ thống kết hợp sức mạnh của **Deep Learning** trong phân tích hình ảnh và **Knowledge Graph** để cung cấp khả năng tư vấn chuyên sâu, giúp tối ưu hóa quy trình làm việc giữa bệnh nhân và bác sĩ.
+## Giới thiệu Dự án
+Dự án tập trung xây dựng một nền tảng hỗ trợ y tế thông minh chuyên sâu về lĩnh vực da liễu, hỗ trợ đắc lực cho người dùng trong việc tự theo dõi và sàng lọc sức khỏe tại nhà. 
 
-## Công nghệ sử dụng
-* **Backend Framework:** FastAPI (Python 3.12+)
-* **Hệ quản trị cơ sở dữ liệu:**
-    * **PostgreSQL:** Lưu trữ dữ liệu quan hệ, thông tin người dùng và quản lý lịch hẹn.
-    * **Neo4j:** Quản lý Đồ thị tri thức y khoa phục vụ công nghệ GraphRAG.
-* **Trí tuệ nhân tạo:**
-    * **Gemini 2.5 Flash:** Xử lý ngôn ngữ tự nhiên, trích xuất thực thể và tạo phản hồi.
-    * **GraphRAG:** Truy vấn dữ liệu thực tế từ đồ thị tri thức để làm giàu ngữ cảnh tư vấn.
-* **Hạ tầng:** Docker & Docker Compose.
+Hệ thống tích hợp hai cốt lõi công nghệ tiên tiến:
+1. **Chẩn đoán đa phương thức (Multimodal Diagnosis):** Kết hợp đồng thời dữ liệu hình ảnh thương tổn da (Computer Vision), thông tin vị trí giải phẫu (Metadata dạng Vector nhị phân) và văn bản mô tả triệu chứng từ bệnh nhân (Natural Language Processing).
+2. **Trợ lý y khoa thông minh (AI Chatbot RAG):** Sử dụng kiến trúc thế hệ mới kết hợp giữa Đồ thị tri thức (Knowledge Graph) và cơ chế RAG (Retrieval-Augmented Generation) giúp chatbot trả lời chính xác, đáng tin cậy dựa trên nguồn tri thức y khoa đã được kiểm chứng, giảm thiểu hiện tượng ảo tưởng (hallucination) của mô hình ngôn ngữ lớn.
 
-## Các tính năng chính
+*Định hướng tương lai:* Phát triển phân hệ điều phối để tối ưu hóa quy trình làm việc và tương tác từ xa giữa bệnh nhân và bác sĩ chuyên khoa da liễu.
 
-### 1. Quản lý danh tính tập trung (Identity Management)
-Lưu trữ thông tin bệnh nhân và bác sĩ.
-* Bảng `User` lưu trữ thông tin định danh dùng chung (Họ tên, Ngày sinh, Giới tính, Avatar).
-* Các bảng `Profile` riêng biệt lưu trữ dữ liệu chuyên môn đặc thù cho Bác sĩ và Bệnh nhân, giảm dữ liệu thừa.
+---
 
-### 2. Chẩn đoán đa phương thức (Multimodal Diagnosis)
-API hỗ trợ tiếp nhận dữ liệu phức hợp bao gồm:
-* Hình ảnh tổn thương da.
-* Mô tả triệu chứng bằng văn bản.
-* Vector vị trí cơ thể (Body Vector) để xác định ngữ cảnh lâm sàng.
+## Kiến trúc Công nghệ
 
-Kết quả đầu ra:
-* Chẩn đoán sơ bộ với độ tin cậy.
-* Khoanh vùng tổn thương trên ảnh.
-* Gợi ý các bước tiếp theo (Tư vấn, Đặt lịch khám).
+### 1. Backend Core Service
+* **Framework:** FastAPI (Python 3.12) - Tối ưu hóa hiệu năng, xử lý bất đồng bộ (Async/Await) và tự động sinh tài liệu API (Swagger UI).
+* **Database Management System:** * **PostgreSQL:** Lưu trữ dữ liệu quan hệ (Thông tin tài khoản, hồ sơ bệnh nhân, lịch sử chẩn đoán, v.v.).
+  * **Neo4j / Vector Database:** Lưu trữ hệ thống thực thể, quan hệ và vector nhúng phục vụ kiến trúc Graph-RAG.
+* **Migration Tool:** Alembic (Quản lý các phiên bản cấu trúc cơ sở dữ liệu).
 
-### 3. Chatbot tư vấn y khoa (GraphRAG)
-Sử dụng công nghệ RAG kết hợp với Neo4j để:
-* Trích xuất thực thể y khoa từ câu hỏi của người dùng.
-* Truy vấn mối quan hệ giữa các bệnh lý, triệu chứng và hoạt chất từ Knowledge Graph.
-* Đưa ra lời khuyên cá nhân hóa dựa trên tiền sử bệnh lý và dị ứng của từng bệnh nhân.
+### 2. AI Inference Service
+* **Framework:** FastAPI độc lập, phục vụ chuyên biệt cho các tác vụ tính toán nặng và chạy mô hình học sâu.
+* **Deep Learning Framework:** PyTorch.
+* **Mô hình AI tích hợp:**
+  * **Gatekeeper (Phễu lọc đầu vào):** Mô hình nhị phân xác định và phân loại ảnh có chứa vùng da hay không trước khi đưa vào phân tích chuyên sâu.
+  * **Disease Classifier:** Phân loại các nhóm bệnh lý da liễu chủ đạo dựa trên đặc trưng hình ảnh kết hợp dữ liệu tab (Metadata vị trí).
+  * **Text Tokenizer:** `vinai/phobert-base-v2` phục vụ xử lý tiếng Việt chuyên sâu cho văn bản triệu chứng.
+  * **Xử lý trực quan trực quan hóa:** Grad-CAM tạo bản đồ nhiệt (Heatmap Overlay) hỗ trợ bác sĩ xác định vùng mô hình AI tập trung phân tích.
+  * **RAG Pipeline:** Kết hợp truy vấn tri thức từ Graph Database và cơ sở dữ liệu Vector để sinh phản hồi tự nhiên bằng mô hình ngôn ngữ lớn Qwen.
 
-### 4. Hệ thống đặt lịch hẹn khám 
-Cho phép bệnh nhân đặt lịch hẹn khám với bác sĩ, đồng thời hệ thống sẽ tự động kiểm tra xung đột lịch trình của bác sĩ để đảm bảo tính khả dụng.
+### 3. Frontend App
+* **Công nghệ nền tảng:** React (JavaScript)
+* **Giao tiếp API:** Axios client tích hợp Interceptor tự động xử lý JWT Authentication.
 
-### 5. Gợi ý bác sĩ & Cơ sở y tế
-Tự động đề xuất danh sách bác sĩ dựa trên việc phân tích chuyên khoa phù hợp với triệu chứng của người dùng, kết hợp sắp xếp theo điểm đánh giá và khoảng cách địa lý.
+### 4. Hạ tầng & Triển khai
+* **Containerization:** Docker & Docker-compose giúp đóng gói độc lập Frontend, Backend và AI Inference Service thành các container riêng biệt, triển khai trên mọi môi trường một cách nhất quán.
 
-## 📂 Cấu trúc thư mục phần backend
+---
+
+## Các Tính năng Chính Hiện tại
+* **Hệ thống Xác thực (Auth):** Đăng ký/Đăng nhập phân quyền rõ ràng giữa Bệnh nhân (Patient) và Bác sĩ (Doctor). Cơ chế cấp Token dạng JWT an toàn.
+* **Chẩn đoán Da liễu AI:** Người dùng tải ảnh thương tổn, chọn vị trí xuất hiện triệu chứng qua giao diện nút bấm (tự động chuyển đổi thành Vector nhị phân 8 chiều) và nhập văn bản mô tả. Hệ thống trả về kết quả dự đoán kèm độ tin cậy và bản đồ nhiệt (Grad-CAM) trực quan hóa cạnh ảnh gốc.
+* **Chatbot RAG:** Hỗ trợ tư vấn chuyên sâu, tự động lưu và hiển thị lịch sử trò chuyện theo từng phiên làm việc của người dùng.
+
+---
+
+## Lộ trình Phát triển Tính năng
+* **Module Appointments:** Hệ thống đặt lịch hẹn khám bệnh trực tuyến với bác sĩ chuyên khoa.
+* **Module Recommendation:** Thuật toán gợi ý bác sĩ và cơ sở y tế chuyên khoa da liễu phù hợp nhất dựa trên vị trí địa lý và tình trạng bệnh lý của bệnh nhân sau chẩn đoán.
+* **Module Tracking:** Nhật ký theo dõi tiến triển của thương tổn da qua thời gian bằng hình ảnh.
+
+---
+
+## 📂 Cấu trúc Thư mục Dự án
+
 ```text
-backend/
-├── config/             # Cấu hình kết nối PostgreSQL, Neo4j
-├── models/             # Định nghĩa Schema SQLAlchemy (User, Profile, Appointment...)
-├── modules/            # Logic nghiệp vụ chính
-|   |
-|   |── ai_diagnosis/   # Xử lý chẩn đoán đa phương thức 
-│   ├── auth/           # Đăng ký, đăng nhập, phân quyền JWT
-│   ├── chatbot_rag/    # Xử lý NLP và truy vấn Knowledge Graph
-│   ├── appointments/   # Quản lý đặt lịch và chống xung đột thời gian
-│   └── profiles/       # Cập nhật thông tin định danh và y tế
-|   └── recommendation/   # Gợi ý bác sĩ và cơ sở y tế
-|   └── tracking/        # Theo dõi tiến trình điều trị và lịch sử bệnh án
-├── initialization/     # Script khởi tạo dữ liệu (Seed Admin)
-└── main.py             # Entry point của ứng dụng
+.
+├── docker-compose.yml              # Quản lý orchestration cho toàn bộ hệ thống
+├── backend/                         # Source code của dịch vụ Backend chính
+│   ├── main.py                     # File khởi chạy FastAPI ứng dụng chính
+│   ├── config/                     # Cấu hình hệ thống và kết nối Database
+│   ├── alembic/                    # Database migration scripts
+│   ├── models/                     # Định nghĩa ORM Models (Users, ChatMessages, v.v.)
+│   ├── modules/                    # Chia module nghiệp vụ (auth, ai_diagnosis, chatbot_rag...)
+│   └── static/                     # Lưu trữ file tĩnh (uploads ảnh gốc, heatmaps chẩn đoán)
+├── ai-inference-service/           # Source code dịch vụ xử lý AI độc lập
+│   ├── main.py                     # File khởi chạy dịch vụ AI
+│   ├── weights/                    # Lưu trữ trọng số mô hình (.pth, .pt)
+│   ├── models/                     # Kiến trúc mạng học sâu
+│   └── services/                   # Logic xử lý inference, Grad-CAM và RAG pipeline
+└── frontend/                        # Ứng dụng giao diện người dùng
+    ├── src/
+    │   ├── api.js                  # Axios client cấu hình sẵn JWT Interceptor
+    │   ├── App.jsx                 # Điều hướng và phân luồng giao diện chính
+    │   └── components/             # Các view thành phần (Auth, Diagnosis, Chatbot)
+    └── vite.config.js              # Cấu hình đóng gói giao diện Vite

@@ -39,7 +39,7 @@ export default function Auth({ onLoginSuccess }) {
                 <p className="auth-eyebrow">Dermatology AI Platform</p>
                 <h2 className="auth-title">Welcome back</h2>
                 <p className="auth-subtitle">
-                    Sign in to continue diagnosis, chatbot, and treatment tracking workflows.
+                Sign in to access AI-powered diagnosis, treatment insights, and your medical dashboard.
                 </p>
 
                 {error && <p className="auth-alert error">{error}</p>}
