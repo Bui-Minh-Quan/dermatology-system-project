@@ -6,18 +6,12 @@ class VectorRetriever:
         self.engine = engine
 
     def retrieve(self, query_embedding: list, top_k: int = 5, distance_threshold: float = 0.6) -> list:
-        """
-        Tìm kiếm Vector sử dụng Cosine Distance (<=>).
-        distance_threshold: Lọc bỏ các chunk không liên quan (ngưỡng 0.6 thường là tốt nhất cho y khoa).
-        """
         if not query_embedding:
             return []
 
         results = []
         try:
             with self.engine.connect() as conn:
-                # pgvector tính distance: 0 là giống hệt nhau, 1 là vuông góc (khác biệt)
-                # Dùng thuộc tính section_type mà bạn vừa thiết kế
                 stmt = text("""
                     SELECT entity_type, entity_name, section_type, content, (embedding <=> :q_emb) as distance
                     FROM knowledge_chunks 

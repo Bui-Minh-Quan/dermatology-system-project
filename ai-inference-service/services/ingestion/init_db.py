@@ -2,29 +2,27 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy import text
 
-# Import engine và Base từ config của bạn
-from config.database import engine, Base
+# Import engine and Base from your database configuration
+from config.database import postgres_engine as engine, Base
 
-# RẤT QUAN TRỌNG: Phải import KnowledgeChunk thì SQLAlchemy mới biết mà tạo bảng!
+# Import models to ensure they are registered for table creation
 from models.knowledge_chunk import KnowledgeChunk
 from models.chat_history import ChatMessage
 
-# Load .env
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-ENV_PATH = os.path.join(BASE_DIR, ".env")
-load_dotenv(ENV_PATH)
+# Load environment variables
+load_dotenv()
 
 def main():
-    print("Đang khởi tạo database...")
+    print("Initializing database...")
     
-    # 1. Bật extension vector
+    # 1. Enable pgvector extension
     with engine.begin() as conn:
         conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
-        print("Đã kiểm tra và bật extension pgvector.")
+        print("Verified and enabled pgvector extension.")
 
-    # 2. Tạo tất cả các bảng đã được import
+    # 2. Create tables
     Base.metadata.create_all(bind=engine)
-    print("Tables created. (Đã tạo bảng thành công!)")
+    print("Database tables created successfully.")
 
 if __name__ == "__main__":
     main()

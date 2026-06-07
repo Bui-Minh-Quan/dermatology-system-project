@@ -2,20 +2,17 @@ from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-# Import Service mà chúng ta vừa tối ưu xong
 from services.rag.rag_service import HybridRAGService
 
-# Tạo Router với prefix gọn gàng
+# Router configuration
 router = APIRouter(
     prefix="/api/chat",
     tags=["Chatbot RAG"]
 )
 
-# Khởi tạo service ở cấp global của router.
-# (Vì nó gọi qua HTTP tới Ollama và dùng Connection Pool của DB nên không cần bỏ vào lifespan)
+# Initialize service globally
 rag_service = HybridRAGService()
 
-# Cấu trúc dữ liệu Frontend gửi lên
 class ChatRequest(BaseModel):
     session_id: str
     query: str
@@ -23,11 +20,10 @@ class ChatRequest(BaseModel):
 @router.post("/stream")
 async def chat_stream_endpoint(request: ChatRequest):
     """
-    Endpoint nhận câu hỏi và trả về Streaming Response.
-    Frontend sẽ nhận từng chunk text ngay khi LLM sinh ra.
+    Endpoint that accepts a user query and returns a streaming response.
+    Frontend receives text chunks in real-time as the LLM generates them.
     """
-    # Gọi hàm generate_answer_stream có chứa lệnh yield
     return StreamingResponse(
         rag_service.generate_answer_stream(request.query, request.session_id),
-        media_type="text/plain" 
+        media_type="text/plain"
     )

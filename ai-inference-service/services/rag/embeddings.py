@@ -3,7 +3,6 @@ import requests
 
 class EmbeddingClient:
     def __init__(self):
-        # Đọc từ biến môi trường hoặc dùng mặc định
         self.url = os.getenv("OLLAMA_URL", "http://localhost:11434")
         self.model = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
 
