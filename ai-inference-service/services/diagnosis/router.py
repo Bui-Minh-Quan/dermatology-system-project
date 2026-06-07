@@ -31,6 +31,10 @@ def parse_body_vector(raw_value: str):
 
         vector = [float(x) for x in values]
 
+        # Check if vector has only binary values (0 or 1)
+        if not all(x in (0, 1) for x in vector):
+            raise ValueError()
+
         if len(vector) != 8:
             raise ValueError()
 

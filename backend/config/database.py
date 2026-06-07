@@ -5,24 +5,13 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from neo4j import GraphDatabase
 from dotenv import load_dotenv
 
-# -----------------------------
-# Load environment variables
-# -----------------------------
-# Resolves to 'backend/' folder
+# Load configuration from .env files
 base_dir = Path(__file__).resolve().parent.parent
-
-# Load .env first. 
 load_dotenv(base_dir / ".env")
-# Only use .env.docker if the first file didn't provide values
 load_dotenv(base_dir / ".env.docker")
 
-# -----------------------------
 # PostgreSQL Configuration
-# -----------------------------
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://postgres:password@db:5432/dermatology_system_db"
-)
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password@db:5432/dermatology_system_db")
 
 postgres_engine = create_engine(
     DATABASE_URL,
@@ -39,17 +28,15 @@ SessionLocal = sessionmaker(
 
 Base = declarative_base()
 
-# Dependency 
 def get_db():
+    """Dependency for getting a database session."""
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
 
-# -----------------------------
 # Neo4j Configuration
-# -----------------------------
 NEO4J_URI = os.getenv("NEO4J_URI", "bolt://neo4j:7687")
 NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "StrongPassword123")
@@ -61,7 +48,6 @@ class Neo4jHandler:
             auth=(NEO4J_USER, NEO4J_PASSWORD)
         )
 
-    # INDENTED THESE METHODS CORRECTLY
     def close(self):
         self.driver.close()
 

@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:15
+    image: pgvector/pgvector:pg15
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -20,8 +20,8 @@ services:
       - "7474:7474"
       - "7687:7687"
     volumes:
-      - neo4j_data:/data   
+      - neo4j_data:/data
 
 volumes:
-postgres_data:
-neo4j_data:
+  postgres_data:
+  neo4j_data:

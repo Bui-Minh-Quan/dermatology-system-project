@@ -5,11 +5,10 @@ from typing import Optional, List
 
 class DiagnosisResponse(BaseModel):
     diagnosis_id: UUID 
-    status: str  # Add the status field!
+    status: str  
     input_image_url: str 
     created_at: datetime
     
-    # Make these Optional since they won't exist immediately
     predicted_disease: Optional[str] = None
     confidence_score: Optional[float] = None
     icd10_code: Optional[str] = None

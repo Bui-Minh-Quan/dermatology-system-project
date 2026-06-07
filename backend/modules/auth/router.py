@@ -37,10 +37,10 @@ def request_otp(otp_request: schemas.OTPRequest, db: Session = Depends(get_db)):
         )
 
     # 2. Mock OTP (replace with real email/SMS service later)
-    mock_otp = "123456"
+    mock_otp = "string"
     print(f"[MOCK OTP] Sent OTP {mock_otp} to {otp_request.email_phone}")
 
-    return {"message": "OTP sent successfully (use 123456 for testing)"}
+    return {"message": "OTP sent successfully (use string for testing)"}
 
 
 # =========================================================
@@ -49,7 +49,7 @@ def request_otp(otp_request: schemas.OTPRequest, db: Session = Depends(get_db)):
 @router.post("/register/patient", status_code=status.HTTP_201_CREATED)
 def register_patient(user_in: schemas.PatientRegister, db: Session = Depends(get_db)):
     # 1. Validate OTP
-    if user_in.otp_code != "123456":
+    if user_in.otp_code != "string":
         raise HTTPException(status_code=400, detail="Mã OTP không hợp lệ")
 
     # 2. Check for duplicate
@@ -92,7 +92,7 @@ def register_patient(user_in: schemas.PatientRegister, db: Session = Depends(get
 @router.post("/register/doctor", status_code=status.HTTP_201_CREATED)
 def register_doctor(user_in: schemas.DoctorRegister, db: Session = Depends(get_db)):
     # 1. Validate OTP
-    if user_in.otp_code != "123456":
+    if user_in.otp_code != "string":
         raise HTTPException(status_code=400, detail="Mã OTP không hợp lệ")
 
     # 2. Check for duplicate account/license

@@ -45,3 +45,6 @@ backend/static/
 
 # Ignore files in test folders
 tests/
+
+# Ignore .json files
+*.json

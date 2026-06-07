@@ -2,7 +2,6 @@ import torch
 from contextlib import asynccontextmanager
 from fastapi import FastAPI 
 from fastapi.staticfiles import StaticFiles
-from transformers import AutoTokenizer
 
 from config.database import postgres_engine, Base 
 

@@ -1,20 +1,16 @@
 from contextlib import asynccontextmanager
-
 import torch
-
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-
+from fastapi.middleware.cors import CORSMiddleware # <-- 1. Import CORS
 from transformers import AutoTokenizer
 
 from services.diagnosis.router import router as diagnosis_router
-
 from services.diagnosis.state import diagnosis_state
+from services.diagnosis.models import Gatekeeper, DiseaseClassifier
 
-from services.diagnosis.models import (
-    Gatekeeper,
-    DiseaseClassifier
-)
+# <-- 2. Import thêm router của Chatbot
+from services.rag.router import router as chat_router
 
 
 # =========================================================
@@ -112,6 +108,14 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # Trong môi trường dev để "*" cho tiện
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.mount(
     "/static",
     StaticFiles(directory="static"),
@@ -119,6 +123,7 @@ app.mount(
 )
 
 app.include_router(diagnosis_router)
+app.include_router(chat_router)
 
 
 @app.get("/")
