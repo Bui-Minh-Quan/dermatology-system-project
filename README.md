@@ -17,6 +17,8 @@ Hệ thống tích hợp hai cốt lõi công nghệ tiên tiến:
 
 *Định hướng tương lai:* Phát triển phân hệ điều phối để tối ưu hóa quy trình làm việc và tương tác từ xa giữa bệnh nhân và bác sĩ chuyên khoa da liễu.
 
+Link video demo: https://drive.google.com/file/d/1z7UpBKBKiAQ_uot77OKDmvhc5U5Ka6VC/view?usp=sharing
+
 ---
 
 ## Kiến trúc Công nghệ
