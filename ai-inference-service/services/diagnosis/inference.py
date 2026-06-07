@@ -1,3 +1,6 @@
+import base64
+import io
+
 import uuid
 from pathlib import Path
 
@@ -229,21 +232,19 @@ async def run_diagnosis(
         (heatmap_overlay * 255).astype(np.uint8)
     )
 
-    heatmap_image.save(heatmap_path)
+    # heatmap_image.save(heatmap_path)
+    buffered = io.BytesIO()
+    heatmap_image.save(buffered, format="JPEG")
+    heatmap_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
 
     # =====================================================
     # 11. RESPONSE
     # =====================================================
 
     return {
-
-        "success": True,
-
-        "predicted_disease": predicted_disease,
-
-        "confidence_score": confidence,
-
-        "heatmap_path": str(heatmap_path),
-
-        "skin_probability": skin_probability
-    }
+    "success": True,
+    "predicted_disease": predicted_disease,
+    "confidence_score": confidence,
+    "heatmap_base64": heatmap_base64, 
+    "skin_probability": skin_probability
+}

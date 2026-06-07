@@ -1,8 +1,6 @@
-import torch
-from contextlib import asynccontextmanager
 from fastapi import FastAPI 
 from fastapi.staticfiles import StaticFiles
-
+from fastapi.middleware.cors import CORSMiddleware
 from config.database import postgres_engine, Base 
 
 from models import users 
@@ -21,6 +19,14 @@ Base.metadata.create_all(bind=postgres_engine)
 
 # Inject the lifespan into the FastAPI application instance
 app = FastAPI(title="Dermatology AI System")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],  
+    allow_headers=["*"],
+)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

@@ -1,34 +1,27 @@
 # Web Framework & Database
-fastapi
-uvicorn
-sqlalchemy
-psycopg2-binary
-neo4j
-python-dotenv
-aiofiles
+fastapi==0.136.1
+uvicorn==0.46.0
+sqlalchemy==2.0.49
+psycopg2-binary==2.9.12
+neo4j==6.1.0
+python-dotenv==1.2.2
+aiofiles==25.1.0
+orjson==3.11.8
 
 # Security
-passlib[bcrypt]
-pyjwt
+passlib==1.7.4
+bcrypt==4.0.1
+pyjwt==2.12.1
+email-validator==2.3.0
 
-# Data Processing
-pandas
-numpy
+# Data & Text Processing
+numpy==2.2.5
+langchain==1.2.15
+langchain-core==1.3.2
+langchain-text-splitters==1.1.2
+langgraph==1.1.10
+Pillow==10.4.0
 
-# AI & Machine Learning
-torch
-torchvision
-transformers
-
-# Background Task Processing
-redis
-rq
-
-# Computer Vision & Explainability
-opencv-python-headless
-grad-cam
-Pillow
-
-# LangChain and GenAI
-langchain
-langchain-google-genai
+# Utilities
+tqdm==4.67.3
+httpx==0.28.1
