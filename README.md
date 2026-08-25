@@ -105,6 +105,7 @@ Truy cập giao diện tại `http://localhost:5173` hoặc địa chỉ hiển 
 
 ## 6. Cấu trúc dự án
 
+```text
 .
 ├── docker-compose.yml              # Cấu hình container cho PostgreSQL (pgvector) và Neo4j
 ├── backend/                        # Dịch vụ Backend quản lý nghiệp vụ và xác thực
@@ -128,3 +129,4 @@ Truy cập giao diện tại `http://localhost:5173` hoặc địa chỉ hiển 
     │   ├── App.jsx                 # Điều hướng và hiển thị giao diện chính
     │   └── components/             # Các view thành phần (Auth, Diagnosis, Chatbot...)
     └── vite.config.js              # Cấu hình Vite
+```
