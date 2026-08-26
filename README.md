@@ -41,6 +41,7 @@ Bên cạnh chẩn đoán, hệ thống còn tích hợp một **Trợ lý AI Y 
 
 ## 4. Demo Hệ thống
 
+* **Báo cáo chi tiết:** [Xem báo cáo tại Google Drive](https://drive.google.com/file/d/1Fa_Mp9NcVOGBRMnkYCHcAiaeJWsYyhLa/view?usp=drive_link).
 * **Video Demo hoạt động:** [Xem video tại Google Drive](https://drive.google.com/file/d/1z7UpBKBKiAQ_uot77OKDmvhc5U5Ka6VC/view?usp=sharing)
 
 
